@@ -11,8 +11,54 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    
+    env:
+      container_image: my-image-name:$(date +%s)
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - run: npm install
+    - run: npm i -g snyk
+    - run: snyk auth ${{ secrets.SNYK_TOKEN }}
+    
+    - name: Snyk Open Source Scanning
+      run: snyk test --sarif-file-output=snyk-oss.sarif
+      continue-on-error: true
+    #- name: Upload result to GitHub Security Center
+    #  uses: github/codeql-action/upload-sarif@v1
+    #  with:
+    #    sarif_file: snyk-oss.sarif
+        
+    - name: Snyk Code Scanning
+      run: snyk code test --sarif-file-output=snyk-code.sarif
+      continue-on-error: true
+    #- name: Upload result to GitHub Security Center
+    #  uses: github/codeql-action/upload-sarif@v1
+    #  with:
+    #    sarif_file: snyk-code.sarif
+          
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: docker build . --file Dockerfile --tag $container_image
+      
+    - name: Snyk Container Scanning
+      run: snyk container test --file=Dockerfile --sarif-file-output=snyk-container.sarif $container_image
+      continue-on-error: true
+    #- name: Upload result to GitHub Security Center
+    #  uses: github/codeql-action/upload-sarif@v1
+    #  with:
+    #    sarif_file: snyk-container.sarif
+        
+    - name: Snyk Infrastructure-as-Code Scanning
+      run: snyk iac test --sarif-file-output=snyk-iac.sarif
+      continue-on-error: true
+    #- name: Upload result to GitHub Security Center
+    #  uses: github/codeql-action/upload-sarif@v1
+    #  with:
+    #    sarif_file: snyk-iac.sarif
