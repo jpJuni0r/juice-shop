@@ -14,6 +14,11 @@ jobs:
     
     env:
       container_image: my-image-name:$(date +%s)
+      
+    strategy:
+      matrix:
+        node-version: [12.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v2
