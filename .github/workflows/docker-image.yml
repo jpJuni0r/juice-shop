@@ -10,7 +10,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      container_image: my-image-name:$(date +%s)
+      #container_image: my-image-name:$(date +%s)
+      container_image: juice-shop:latest
     strategy:
       matrix:
         node-version: [12.x]
