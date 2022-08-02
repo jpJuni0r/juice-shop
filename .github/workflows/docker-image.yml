@@ -7,14 +7,10 @@ on:
     branches: [ master ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-    
     env:
       container_image: my-image-name:$(date +%s)
-      
     strategy:
       matrix:
         node-version: [12.x]
