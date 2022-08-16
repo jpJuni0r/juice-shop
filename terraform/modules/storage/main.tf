@@ -24,7 +24,7 @@ resource "aws_db_instance" "snyk_db" {
   engine_version            = "10.20"
   instance_class            = "db.t3.micro"
   storage_type              = "gp2"
-  password                  = "supersecret"
+  password                  = "supersecretharry"
   username                  = "snyk"
   vpc_security_group_ids    = [var.rds_sg_id]
   db_subnet_group_name      = aws_db_subnet_group.snyk_rds_subnet_grp.id
